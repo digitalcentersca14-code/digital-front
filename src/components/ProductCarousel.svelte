@@ -1,5 +1,8 @@
 <script lang="ts">
-    import { ChevronLeft, ChevronRight, Star, Heart } from 'lucide-svelte';
+    import ChevronLeft from '../components/icons/ChevronLeft.svelte';
+    import ChevronRight from '../components/icons/ChevronRight.svelte';
+    import Star from '../components/icons/Star.svelte';
+    import Heart from '../components/icons/Heart.svelte';
     import { onMount } from 'svelte';
     import { formatPrice } from '../utils/format';
 

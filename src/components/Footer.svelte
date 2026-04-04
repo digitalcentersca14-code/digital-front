@@ -1,6 +1,8 @@
 <script lang="ts">
     import { settingsStore } from '../stores/settings';
-    import { MapPin, Phone, Mail } from 'lucide-svelte';
+    import MapPin from '../components/icons/MapPin.svelte';
+    import Phone from '../components/icons/Phone.svelte';
+    import Mail from '../components/icons/Mail.svelte';
 
     const currentYear = new Date().getFullYear();
 </script>

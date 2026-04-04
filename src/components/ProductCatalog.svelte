@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { Search, PackageOpen } from 'lucide-svelte';
+    import Search from '../components/icons/Search.svelte';
+    import PackageOpen from '../components/icons/PackageOpen.svelte';
     import { formatPrice } from '../utils/format';
 
     export let products = [];

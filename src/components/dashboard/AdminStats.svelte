@@ -1,7 +1,12 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { tokenStore } from '../../stores/auth';
-    import { BarChart3, TrendingUp, MessageSquare, Heart, Eye, Star } from 'lucide-svelte';
+    import BarChart3 from '../../components/icons/BarChart3.svelte';
+    import TrendingUp from '../../components/icons/TrendingUp.svelte';
+    import MessageSquare from '../../components/icons/MessageSquare.svelte';
+    import Heart from '../../components/icons/Heart.svelte';
+    import Eye from '../../components/icons/Eye.svelte';
+    import Star from '../../components/icons/Star.svelte';
 
     const API_URL = import.meta.env.PUBLIC_API_URL;
     let stats = [];

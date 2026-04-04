@@ -1,6 +1,8 @@
 <script lang="ts">
     import { tokenStore } from '../stores/auth';
-    import { Lock, User, Loader2 } from 'lucide-svelte';
+    import Lock from './icons/Lock.svelte';
+    import User from './icons/User.svelte';
+    import Loader2 from './icons/Loader2.svelte';
 
     let username = '';
     let password = '';

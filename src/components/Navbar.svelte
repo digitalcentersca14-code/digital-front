@@ -1,6 +1,10 @@
 <script lang="ts">
     import { tokenStore, logout } from '../stores/auth';
-    import { Menu, X, ShoppingCart, User, LogOut } from 'lucide-svelte';
+    import Menu from '../components/icons/Menu.svelte';
+    import X from '../components/icons/X.svelte';
+    import ShoppingCart from '../components/icons/ShoppingCart.svelte';
+    import User from '../components/icons/User.svelte';
+    import LogOut from '../components/icons/LogOut.svelte';
 
     let isOpen = false;
 

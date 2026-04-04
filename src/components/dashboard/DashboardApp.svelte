@@ -5,7 +5,12 @@
     import AdminProducts from './AdminProducts.svelte';
     import AdminCategories from './AdminCategories.svelte';
     import AdminStats from './AdminStats.svelte';
-    import { Package, FolderTree, Settings, LayoutDashboard, LogOut, BarChart3 } from 'lucide-svelte';
+    import Package from '../../components/icons/Package.svelte';
+    import FolderTree from '../../components/icons/FolderTree.svelte';
+    import Settings from '../../components/icons/Settings.svelte';
+    import LayoutDashboard from '../../components/icons/LayoutDashboard.svelte';
+    import LogOut from '../../components/icons/LogOut.svelte';
+    import BarChart3 from '../../components/icons/BarChart3.svelte';
 
     let activeTab = 'summary';
 

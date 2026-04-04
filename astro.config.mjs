@@ -8,8 +8,7 @@ import netlify from '@astrojs/netlify';
 export default defineConfig({
   adapter: netlify(),
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
   },
-
   integrations: [svelte()]
 });

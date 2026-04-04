@@ -1,7 +1,11 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { tokenStore } from '../../stores/auth';
-    import { Trash2, Edit2, Plus, Loader2, Save } from 'lucide-svelte';
+    import Trash2 from '../../components/icons/Trash2.svelte';
+    import Edit2 from '../../components/icons/Edit2.svelte';
+    import Plus from '../../components/icons/Plus.svelte';
+    import Loader2 from '../../components/icons/Loader2.svelte';
+    import Save from '../../components/icons/Save.svelte';
 
     const API_URL = import.meta.env.PUBLIC_API_URL;
 

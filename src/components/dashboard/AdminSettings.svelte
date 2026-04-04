@@ -1,6 +1,7 @@
 <script lang="ts">
     import { settingsStore } from '../../stores/settings';
-    import { Save } from 'lucide-svelte';
+    import Save from '../../components/icons/Save.svelte';
+    import Loader2 from '../../components/icons/Loader2.svelte';
     
     // Store variables temporales para editar
     let draftLogo = $settingsStore.logoUrl;
