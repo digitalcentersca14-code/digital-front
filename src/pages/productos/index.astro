@@ -1,0 +1,23 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProductCatalog from '../../components/ProductCatalog.svelte';
+
+const API_URL = import.meta.env.PUBLIC_API_URL;
+let products = [];
+
+try {
+    const res = await fetch(`${API_URL}/products/`);
+    if (res.ok) {
+        products = await res.json();
+    }
+} catch (e) {
+    console.error("Error fetching products", e);
+}
+---
+
+<Layout>
+    <div class="min-h-screen relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-full h-[500px] bg-indigo-900/10 blur-[150px] rounded-full -z-10"></div>
+        <ProductCatalog client:only="svelte" products={products} />
+    </div>
+</Layout>

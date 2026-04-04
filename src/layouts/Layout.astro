@@ -1,0 +1,68 @@
+---
+import "../styles/global.css";
+import Navbar from "../components/Navbar.svelte";
+import Footer from "../components/Footer.svelte";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Digital Center - Tienda Electrónica</title>
+    <!-- Google Fonts para Aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="bg-[#0b0f19] text-gray-100 font-['Outfit'] min-h-screen flex flex-col selection:bg-indigo-500/30"
+  >
+    <Navbar client:only="svelte" />
+    <main class="flex-grow scroll-smooth">
+      <slot />
+    </main>
+    <Footer client:only="svelte" />
+  </body>
+</html>
+
+<style is:global>
+  /* Optimizaciones generales */
+  html {
+    scroll-behavior: smooth;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+  }
+
+  /* Scrollbar Aesthetic */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0b0f19;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1f2937;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #374151;
+  }
+
+  /* Utilerías Glassmorphism global */
+  .glassmorphism {
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+</style>

@@ -1,0 +1,8 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import DashboardApp from '../../components/dashboard/DashboardApp.svelte';
+---
+
+<Layout>
+    <DashboardApp client:only="svelte" />
+</Layout>

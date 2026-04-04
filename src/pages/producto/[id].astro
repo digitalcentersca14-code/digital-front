@@ -1,0 +1,316 @@
+---
+export const prerender = false;
+import Layout from '../../layouts/Layout.astro';
+import { ShoppingCart, Star, MessageSquare, Heart, ThumbsUp } from 'lucide-svelte';
+import { formatPrice } from '../../utils/format';
+
+const { id } = Astro.params;
+const API_URL = import.meta.env.PUBLIC_API_URL;
+
+let product = null;
+
+try {
+    const res = await fetch(`${API_URL}/products/${id}/`);
+    if (res.ok) {
+        product = await res.json();
+    }
+} catch(e) {
+    console.error(e);
+}
+
+// Helper para armar URL a WhatsApp
+const WHATSAPP_NUMBER = import.meta.env.PUBLIC_WHATSAPP_NUMBER || '1234567890';
+const whatsappBaseMessage = product ? `Hola, me interesa comprar el repuesto/equipo: ${product.name}. ¿Sigue disponible?` : 'Hola';
+const encodedMsg = encodeURIComponent(whatsappBaseMessage);
+const whastappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMsg}`;
+
+if (!product) {
+    return Astro.redirect('/404');
+}
+---
+
+<Layout>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 min-h-[85vh]">
+        <div class="glassmorphism p-6 sm:p-10 rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-12">
+            
+            <!-- Galería de imágenes (FastAPI permitió hasta 6) -->
+            <div class="space-y-4">
+                <div class="aspect-square bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 shadow-xl relative">
+                    {product.discount_price && product.is_discount_active && (
+                        <div class="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg z-10 shadow-lg uppercase tracking-widest animate-bounce">Oferta Especial</div>
+                    )}
+                    {product.images && product.images.length > 0 ? (
+                        <img id="main-image" src={product.images[0]} alt={product.name} class="w-full h-full object-cover transition-all duration-300" />
+                    ) : (
+                        <div class="w-full h-full flex flex-col items-center justify-center text-gray-600 bg-gradient-to-tr from-gray-800 to-gray-900">
+                            <span class="text-sm border border-gray-700 px-4 py-2 rounded-full">Imagen no disponible</span>
+                        </div>
+                    )}
+                </div>
+                <!-- Miniaturas (Max 5 más) -->
+                {product.images && product.images.length > 1 && (
+                    <div class="grid grid-cols-5 gap-3">
+                        {product.images.map((img, idx) => (
+                            <button 
+                                class="aspect-square rounded-xl overflow-hidden cursor-pointer border hover:border-indigo-500 border-gray-800 transition-colors thumbnail-btn"
+                                data-src={img}
+                            >
+                                <img src={img} alt={`Galeria ${idx}`} class="w-full h-full object-cover" />
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+                <div class="flex items-center justify-between mb-2">
+                    <div class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 px-3 py-1 rounded-full text-sm font-medium w-fit">
+                        Categoría Asociada
+                    </div>
+                    <button id="like-btn" class="p-3 bg-gray-900 border border-gray-800 rounded-2xl text-gray-400 hover:text-pink-500 hover:border-pink-500/30 transition-all active:scale-90 group relative">
+                        <Heart id="like-icon" size={24} />
+                        <span class="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-gray-800">¡Me gusta!</span>
+                    </button>
+                </div>
+                
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">{product.name}</h1>
+                
+                <div class="flex items-center gap-6 text-gray-400 mb-8 border-b border-gray-800 pb-6">
+                    <span class="flex items-center gap-2">
+                        <Star size={18} class="text-amber-400" /> Nuevo Ingreso
+                    </span>
+                    <span id="views-counter" class="flex items-center gap-2">
+                        <ThumbsUp size={18} class="text-indigo-400" /> {product.views || 0} visualizaciones
+                    </span>
+                </div>
+
+                <p class="text-gray-300 text-lg leading-relaxed mb-6">{product.description}</p>
+                
+                <div class="bg-gray-900/50 p-6 rounded-2xl mb-8 border border-white/5">
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider opacity-60">Califica este producto</h4>
+                    <div class="flex gap-2" id="rating-stars">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                            <button class="star-btn p-1 text-gray-600 hover:text-amber-400 transition-all hover:scale-110" data-score={s}>
+                                <Star size={28} />
+                            </button>
+                        ))}
+                    </div>
+                    <p id="rating-msg" class="text-xs text-indigo-400 mt-2 opacity-0 transition-opacity">¡Gracias por calificar!</p>
+                </div>
+                
+                <div class="mb-10">
+                    {product.discount_price && product.is_discount_active ? (
+                        <div class="flex flex-col">
+                            <span class="text-xl text-gray-500 line-through mb-1">${formatPrice(product.price)}</span>
+                            <span class="text-6xl font-black bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+                                ${formatPrice(product.discount_price)}
+                            </span>
+                        </div>
+                    ) : (
+                        <div class="text-6xl font-black bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                            ${formatPrice(product.price)}
+                        </div>
+                    )}
+                </div>
+
+                <a 
+                    href={whastappUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="w-full py-4 px-6 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] flex justify-center items-center gap-3 text-lg"
+                >
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"></path><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"></path></svg> 
+                    Comprar via WhatsApp
+                </a>
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="mt-16 glassmorphism p-8 sm:p-10 rounded-3xl border border-gray-800">
+            <h3 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                <MessageSquare class="text-indigo-400" /> Opiniones y Comentarios
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <!-- Add Comment Form -->
+                <div class="md:col-span-1 border-r border-gray-800 pr-0 md:pr-12">
+                    <h4 class="text-lg font-semibold text-white mb-4">Deja tu comentario</h4>
+                    <div class="space-y-4">
+                        <textarea id="comment-text" placeholder="¿Qué te pareció este producto?" class="w-full bg-gray-900 border border-gray-700 rounded-2xl p-4 text-white outline-none focus:ring-2 focus:ring-indigo-500 h-32 resize-none"></textarea>
+                        <button id="submit-comment" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all flex justify-center items-center gap-2">
+                            Publicar comentario
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Comments List -->
+                <div class="md:col-span-2 space-y-6 max-h-[500px] overflow-y-auto pr-4 scrollbar-hide" id="comments-list">
+                    <p class="text-gray-500 italic">Cargando comentarios...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+<script is:inline define:vars={{ productId: product.id, apiUrl: API_URL }}>
+    // Manejo de la galería de imágenes
+    const mainImage = document.getElementById('main-image');
+    const thumbBtns = document.querySelectorAll('.thumbnail-btn');
+
+    thumbBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const newSrc = btn.getAttribute('data-src');
+            if (mainImage && newSrc) {
+                mainImage.style.opacity = '0';
+                setTimeout(() => {
+                    mainImage.src = newSrc;
+                    mainImage.style.opacity = '1';
+                }, 150);
+            }
+        });
+    });
+
+    // --- Like Logic (Toggle) ---
+    const likeBtn = document.getElementById('like-btn');
+    const likeIcon = document.getElementById('like-icon');
+    let likeId = localStorage.getItem(`likeId_${productId}`);
+    let hasLiked = !!likeId;
+
+    if (hasLiked) {
+        likeIcon.style.fill = '#ec4899';
+        likeIcon.style.color = '#ec4899';
+    }
+
+    likeBtn.addEventListener('click', async () => {
+        if (hasLiked) {
+            // UNLIKE
+            try {
+                const res = await fetch(`${apiUrl}/interactions/like/${likeId}`, { method: 'DELETE' });
+                if (res.ok) {
+                    hasLiked = false;
+                    likeId = null;
+                    localStorage.removeItem(`likeId_${productId}`);
+                    likeIcon.style.fill = 'none';
+                    likeIcon.style.color = 'currentColor';
+                }
+            } catch(e) { console.error("Error unliking", e); }
+        } else {
+            // LIKE
+            try {
+                const res = await fetch(`${apiUrl}/interactions/products/${productId}/like`, { method: 'POST' });
+                if (res.ok) {
+                    const data = await res.json();
+                    hasLiked = true;
+                    likeId = data.id;
+                    localStorage.setItem(`likeId_${productId}`, likeId);
+                    likeIcon.style.fill = '#ec4899';
+                    likeIcon.style.color = '#ec4899';
+                    likeBtn.style.transform = 'scale(1.2)';
+                    setTimeout(() => likeBtn.style.transform = 'scale(1)', 200);
+                }
+            } catch(e) { console.error("Error liking product", e); }
+        }
+    });
+
+    // --- Rating Logic ---
+    const starBtns = document.querySelectorAll('.star-btn');
+    const ratingMsg = document.getElementById('rating-msg');
+    let hasRated = localStorage.getItem(`rate_${productId}`) === 'true';
+
+    if (hasRated) {
+        starBtns.forEach(btn => btn.style.pointerEvents = 'none');
+        ratingMsg.style.opacity = '1';
+        ratingMsg.textContent = 'Ya has calificado este artículo';
+    }
+
+    starBtns.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (hasRated) return;
+            const score = parseInt(btn.getAttribute('data-score'));
+
+            try {
+                const res = await fetch(`${apiUrl}/interactions/products/${productId}/rate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ score: score })
+                });
+
+                if (res.ok) {
+                    hasRated = true;
+                    localStorage.setItem(`rate_${productId}`, 'true');
+                    
+                    // Colorear estrellas hasta el score
+                    starBtns.forEach(sb => {
+                        if (parseInt(sb.getAttribute('data-score')) <= score) {
+                            sb.style.color = '#fbbf24';
+                        }
+                        sb.style.pointerEvents = 'none';
+                    });
+
+                    ratingMsg.style.opacity = '1';
+                }
+            } catch(e) { console.error("Error rating product", e); }
+        });
+    });
+
+    // --- Comments Logic ---
+    const commentList = document.getElementById('comments-list');
+    const commentInput = document.getElementById('comment-text');
+    const submitBtn = document.getElementById('submit-comment');
+
+    async function loadComments() {
+        try {
+            const res = await fetch(`${apiUrl}/interactions/products/${productId}/comments`);
+            if (res.ok) {
+                const comments = await res.json();
+                if (comments.length === 0) {
+                    commentList.innerHTML = '<p class="text-gray-500 italic">No hay comentarios todavía. ¡Sé el primero!</p>';
+                    return;
+                }
+                
+                commentList.innerHTML = comments.map(c => `
+                    <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-indigo-400 font-bold text-sm">Cliente Anónimo</span>
+                            <span class="text-gray-600 text-xs">${new Date(c.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <p class="text-gray-300 text-sm leading-relaxed">${c.content}</p>
+                    </div>
+                `).join('');
+            }
+        } catch(e) { console.error("Error loading comments", e); }
+    }
+
+    submitBtn.addEventListener('click', async () => {
+        const content = commentInput.value.trim();
+        if (!content) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando...';
+
+        try {
+            const res = await fetch(`${apiUrl}/interactions/products/${productId}/comments?content=${encodeURIComponent(content)}`, {
+                method: 'POST'
+            });
+
+            if (res.ok) {
+                commentInput.value = '';
+                await loadComments();
+            }
+        } catch(e) { console.error("Error posting comment", e); }
+        finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Publicar comentario';
+        }
+    });
+
+    loadComments();
+</script>
+
+<style>
+    .star-btn svg {
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .star-btn:hover svg {
+        transform: scale(1.2);
+    }
+</style>
+
+</Layout>

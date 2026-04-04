@@ -1,0 +1,246 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Star, ShieldCheck, Zap, ArrowRight, Heart, Eye } from 'lucide-svelte';
+import ProductCarousel from '../components/ProductCarousel.svelte';
+
+// Fetch a la API para los articulos en tendencia
+const API_URL = import.meta.env.PUBLIC_API_URL;
+let trendingProducts = [];
+let mostViewedProducts = [];
+let allProducts = [];
+
+try {
+    const [statsRes, prodRes] = await Promise.all([
+        fetch(`${API_URL}/products/statistics/trending`),
+        fetch(`${API_URL}/products/`)
+    ]);
+
+    if (statsRes.ok) {
+        const stats = await statsRes.json();
+        trendingProducts = stats;
+        mostViewedProducts = [...stats].sort((a, b) => b.total_views - a.total_views).slice(0, 4);
+    }
+    
+    if (prodRes.ok) {
+        allProducts = await prodRes.json();
+    }
+} catch(e) {
+    console.error("Error fetching homepage data", e);
+}
+---
+
+<Layout>
+    <!-- Hero Carousel Section -->
+    <div class="relative overflow-hidden w-full h-[90vh] md:h-[85vh] bg-[#0b0f19]">
+        <div id="hero-carousel" class="relative w-full h-full">
+            <!-- Slide 1 -->
+            <div class="carousel-slide active absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-1000 z-0 scale-110">
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/60 via-[#0b0f19] to-transparent -z-10"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-500/20 blur-[150px] rounded-full -z-10"></div>
+                <div class="max-w-7xl mx-auto px-4 text-center">
+                    <span class="carousel-badge px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 font-medium text-sm mb-6 inline-flex items-center gap-2 transform -translate-y-10 opacity-0 transition-all duration-700 delay-300">
+                        <Zap size={14} /> La Mejor Tecnología
+                    </span>
+                    <h1 class="carousel-title text-5xl md:text-8xl font-black text-white tracking-tighter mb-8 transform -translate-y-10 opacity-0 transition-all duration-700 delay-500">
+                        REPARACIÓN Y <span class="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">VENTA</span>
+                    </h1>
+                    <p class="carousel-desc text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed transform -translate-y-10 opacity-0 transition-all duration-700 delay-700">
+                        Especialistas en dispositivos móviles. Repuestos originales y servicio técnico garantizado el mismo día.
+                    </p>
+                    <div class="carousel-btns flex flex-col sm:flex-row gap-4 justify-center transform -translate-y-10 opacity-0 transition-all duration-700 delay-900">
+                        <a href="/productos" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.4)] flex items-center justify-center gap-2">
+                            Explorar Catálogo <ArrowRight size={20} />
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-slide absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-1000 z-0 scale-110">
+                <div class="absolute inset-0 bg-gradient-to-tr from-emerald-900/40 via-[#0b0f19] to-transparent -z-10"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/10 blur-[150px] rounded-full -z-10"></div>
+                <div class="max-w-7xl mx-auto px-4 text-center">
+                    <span class="carousel-badge px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 font-medium text-sm mb-6 inline-flex items-center gap-2 transform -translate-y-10 opacity-0 transition-all duration-700 delay-300">
+                        <Star size={14} /> Ofertas Increíbles
+                    </span>
+                    <h1 class="carousel-title text-5xl md:text-8xl font-black text-white tracking-tighter mb-8 transform -translate-y-10 opacity-0 transition-all duration-700 delay-500">
+                        GRANDES <span class="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">OFERTAS</span>
+                    </h1>
+                    <p class="carousel-desc text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed transform -translate-y-10 opacity-0 transition-all duration-700 delay-700">
+                        Descubre precios de oferta en pantallas, baterías y accesorios seleccionados de las mejores marcas.
+                    </p>
+                    <div class="carousel-btns flex flex-col sm:flex-row gap-4 justify-center transform -translate-y-10 opacity-0 transition-all duration-700 delay-900">
+                        <a href="/productos" class="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2">
+                            Ver Descuentos <ArrowRight size={20} />
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="carousel-slide absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-1000 z-0 scale-110">
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-[#0b0f19] to-transparent -z-10"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/10 blur-[150px] rounded-full -z-10"></div>
+                <div class="max-w-7xl mx-auto px-4 text-center">
+                    <span class="carousel-badge px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-300 font-medium text-sm mb-6 inline-flex items-center gap-2 transform -translate-y-10 opacity-0 transition-all duration-700 delay-300">
+                        <ShieldCheck size={14} /> Confianza Total
+                    </span>
+                    <h1 class="carousel-title text-5xl md:text-8xl font-black text-white tracking-tighter mb-8 transform -translate-y-10 opacity-0 transition-all duration-700 delay-500">
+                        SERVICIO <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">EXPERTOS</span>
+                    </h1>
+                    <p class="carousel-desc text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed transform -translate-y-10 opacity-0 transition-all duration-700 delay-700">
+                        Más de 10 años brindando soluciones técnicas. Si tiene reparación, nosotros lo logramos.
+                    </p>
+                    <div class="carousel-btns flex flex-col sm:flex-row gap-4 justify-center transform -translate-y-10 opacity-0 transition-all duration-700 delay-900">
+                        <a href="/contacto" class="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-all shadow-[0_0_20px_rgba(147,51,234,0.4)] flex items-center justify-center gap-2">
+                            Contactar Técnico <ArrowRight size={20} />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Dots -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+            <button class="carousel-dot w-3 h-3 rounded-full bg-white/20 hover:bg-white/50 transition-all active"></button>
+            <button class="carousel-dot w-3 h-3 rounded-full bg-white/20 hover:bg-white/50 transition-all"></button>
+            <button class="carousel-dot w-3 h-3 rounded-full bg-white/20 hover:bg-white/50 transition-all"></button>
+        </div>
+    </div>
+
+    <!-- All Products Carousel -->
+    <div class="py-20 bg-[#070b14]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-end justify-between mb-10">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-2">Novedades en Tienda</h2>
+                    <p class="text-gray-400">Descubre nuestros ingresos más recientes y repuestos disponibles.</p>
+                </div>
+                <a href="/productos" class="hidden sm:flex text-indigo-400 hover:text-indigo-300 items-center gap-1 font-medium">
+                    Ver todos <ArrowRight size={18} />
+                </a>
+            </div>
+            
+            {allProducts.length === 0 ? (
+                <div class="text-center py-20 glassmorphism rounded-2xl border-dashed">
+                    <p class="text-gray-400">Cargando productos...</p>
+                </div>
+            ) : (
+                <ProductCarousel client:load products={allProducts} />
+            )}
+        </div>
+    </div>
+
+    <!-- Tendencias (Trending Products) -->
+    <div class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-12">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Lo Más Buscado</h2>
+                <p class="text-gray-400">Los productos y repuestos mejor valorados por nuestros clientes.</p>
+            </div>
+        </div>
+
+        {trendingProducts.length === 0 && (
+            <div class="text-center py-20 glassmorphism rounded-2xl border-dashed">
+                <p class="text-gray-400">No hay productos en tendencia aún. ¡Sé el primero en calificar!</p>
+            </div>
+        )}
+
+        <div class="mb-16">
+            <ProductCarousel client:load products={trendingProducts} />
+        </div>
+
+        <!-- Mas Vistos Section -->
+        {mostViewedProducts.length > 0 && (
+            <div class="mt-20">
+                <div class="flex items-end justify-between mb-12 border-l-4 border-indigo-500 pl-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-white mb-2">Populares Ahora</h2>
+                        <p class="text-gray-400">Lo que otros clientes están revisando en este momento.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {mostViewedProducts.map((item) => (
+                        <a href={`/producto/${item.product_id}`} class="group glassmorphism rounded-2xl overflow-hidden border border-white/5 hover:border-indigo-500/30 transition-all block">
+                            <div class="h-32 bg-gray-900 flex items-center p-4 gap-4">
+                                <div class="w-20 h-20 bg-gray-800 rounded-xl overflow-hidden shrink-0 border border-gray-700">
+                                    {item.images && item.images.length > 0 ? (
+                                        <img src={item.images[0]} alt={item.product_name} class="w-full h-full object-cover" />
+                                    ) : (
+                                        <div class="w-full h-full flex items-center justify-center text-[10px] text-gray-600">N/A</div>
+                                    )}
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="text-white font-bold text-sm truncate mb-1">{item.product_name}</h4>
+                                    <div class="flex items-center gap-2 text-[11px] text-gray-400">
+                                        <Eye size={12} class="text-emerald-400" /> {item.total_views} visualizaciones
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    ))}
+                </div>
+            </div>
+        )}
+        <div class="mt-8 sm:hidden">
+            <a href="/productos" class="w-full py-4 glassmorphism text-indigo-400 hover:text-indigo-300 rounded-xl flex items-center justify-center gap-2 font-medium">
+                Ver todos <ArrowRight size={18} />
+            </a>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .carousel-slide.active {
+        opacity: 1;
+        z-index: 10;
+        transform: scale(1);
+    }
+    .carousel-slide.active .carousel-badge,
+    .carousel-slide.active .carousel-title,
+    .carousel-slide.active .carousel-desc,
+    .carousel-slide.active .carousel-btns {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    .carousel-dot.active {
+        background-color: white;
+        width: 2rem;
+    }
+</style>
+
+<script is:inline>
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.carousel-dot');
+    let currentSlide = 0;
+    let autoPlayInterval;
+
+    function showSlide(index) {
+        slides.forEach(s => s.classList.remove('active'));
+        dots.forEach(d => d.classList.remove('active'));
+        
+        slides[index].classList.add('active');
+        dots[index].classList.add('active');
+        currentSlide = index;
+    }
+
+    function nextSlide() {
+        showSlide((currentSlide + 1) % slides.length);
+    }
+
+    dots.forEach((dot, idx) => {
+        dot.addEventListener('click', () => {
+            showSlide(idx);
+            resetInterval();
+        });
+    });
+
+    function resetInterval() {
+        clearInterval(autoPlayInterval);
+        autoPlayInterval = setInterval(nextSlide, 5000);
+    }
+
+    // Init
+    showSlide(0);
+    resetInterval();
+</script>
