@@ -1,0 +1,26 @@
+import { c as createComponent, $ as $$Layout } from './Layout_B4HaNM--.mjs';
+import 'piccolore';
+import { r as renderComponent, a as renderTemplate, m as maybeRenderHead } from './prerender_hQavP005.mjs';
+import { Phone, MessageSquare } from 'lucide-svelte';
+
+const $$Contacto = createComponent(($$result, $$props, $$slots) => {
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, {}, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 min-h-[85vh]"> <div class="text-center mb-16 relative"> <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-purple-600/10 blur-[100px] rounded-full -z-10"></div> <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">Contáctanos</h1> <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+¿Pantalla rota? ¿Batería muerta? Cuéntanos tu problema y nuestros especialistas te atenderán en seguida.
+</p> </div> <div class="grid grid-cols-1 md:grid-cols-2 gap-12"> <!-- Info de Contacto --> <div class="space-y-6"> <div class="glassmorphism p-8 rounded-2xl flex items-start gap-4"> <div class="p-4 bg-green-500/20 rounded-xl text-green-400"> ${renderComponent($$result2, "Phone", Phone, { "size": 28 })} </div> <div> <h3 class="text-xl font-bold text-white mb-2">Llamadas y WhatsApp</h3> <p class="text-gray-400">+123 456 789 000<br>Atención 8:00 AM - 6:00 PM</p> </div> </div> </div> <!-- Botonazo WhatsApp Central --> <div class="glassmorphism p-10 rounded-2xl flex flex-col justify-center text-center items-center h-full border border-green-500/20 shadow-[0_0_30px_rgba(16,185,129,0.05)]"> ${renderComponent($$result2, "MessageSquare", MessageSquare, { "size": 64, "class": "text-emerald-400 mb-6" })} <h2 class="text-2xl font-bold text-white mb-4">¿Atención Rápida?</h2> <p class="text-gray-400 mb-8">Nuestros técnicos contestan a través de WhatsApp. Envía una foto del problema o del repuesto que buscas y recibe tu cotización en 10 minutos.</p> <a href="https://wa.me/1234567890" target="_blank" class="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center gap-2 text-lg">
+Chat Soporte Técnico
+</a> </div> </div> </div> ` })}`;
+}, "/home/dark/Escritorio/digital-center/digital-center/src/pages/contacto.astro", void 0);
+
+const $$file = "/home/dark/Escritorio/digital-center/digital-center/src/pages/contacto.astro";
+const $$url = "/contacto";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+    __proto__: null,
+    default: $$Contacto,
+    file: $$file,
+    url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };
