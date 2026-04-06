@@ -165,7 +165,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-400 mb-1" for="pics">Fotos (Máximo 6, JPG/PNG)</label>
                 <div class="w-full relative px-4 py-2 bg-gray-900 border border-gray-700 border-dashed rounded-xl flex items-center gap-2 overflow-hidden h-[46px]">
-                    <ImageIcon size={18} class="text-gray-500 shrink-0" />
+                    <Image size={18} class="text-gray-500 shrink-0" />
                     <input id="pics" type="file" multiple accept="image/*" bind:files={selectedFiles} class="absolute inset-0 w-full opacity-0 cursor-pointer" />
                     <span class="text-sm text-gray-400 truncate">{selectedFiles && selectedFiles.length > 0 ? `${selectedFiles.length} imágenes seleccionadas` : 'Click para subir archivos'}</span>
                 </div>
@@ -206,7 +206,7 @@
                                 {#if p.images && p.images.length > 0}
                                     <img src={p.images[0]} class="w-10 h-10 rounded-lg object-cover" alt="miniatura"/>
                                 {:else}
-                                    <div class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center"><ImageIcon size={14} class="text-gray-600"/></div>
+                                    <div class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center"><Image size={14} class="text-gray-600"/></div>
                                 {/if}
                             </td>
                             <td class="px-4 py-4 font-medium text-white max-w-[200px] truncate">{p.name}</td>

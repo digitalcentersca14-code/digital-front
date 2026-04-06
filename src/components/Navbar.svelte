@@ -1,5 +1,6 @@
 <script lang="ts">
     import { tokenStore, logout } from '../stores/auth';
+    import { settingsStore } from '../stores/settings';
     import Menu from '../components/icons/Menu.svelte';
     import X from '../components/icons/X.svelte';
     import ShoppingCart from '../components/icons/ShoppingCart.svelte';
@@ -18,7 +19,10 @@
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
             <div class="flex-shrink-0 flex items-center gap-2">
-                <a href="/" class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                <a href="/" class="flex items-center gap-2 text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                    {#if $settingsStore.logoUrl}
+                        <img src={$settingsStore.logoUrl} alt="Logo" class="w-10 h-10 rounded-full object-cover shadow-sm border border-indigo-500/30" />
+                    {/if}
                     DigitalCenter
                 </a>
             </div>

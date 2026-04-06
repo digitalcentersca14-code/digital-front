@@ -5,6 +5,7 @@
     import Heart from '../components/icons/Heart.svelte';
     import { onMount } from 'svelte';
     import { formatPrice } from '../utils/format';
+    import { tokenStore } from '../stores/auth';
 
     export let products: any[] = [];
     let scrollContainer: HTMLDivElement;
@@ -102,11 +103,13 @@
                         
                         <div class="flex items-center justify-between mt-6 pt-4 border-t border-white/5">
                             <div class="flex items-center gap-4 text-xs text-gray-400">
-                                <span class="flex items-center gap-1.5">
-                                    <Heart size={14} class="text-pink-500" /> {item.total_likes ?? 0}
-                                </span>
-                                <span class="w-1 h-1 rounded-full bg-gray-700"></span>
-                                <span>{item.total_views ?? item.views ?? 0} visualizaciones</span>
+                                {#if $tokenStore}
+                                    <span class="flex items-center gap-1.5">
+                                        <Heart size={14} class="text-pink-500" /> {item.total_likes ?? 0}
+                                    </span>
+                                    <span class="w-1 h-1 rounded-full bg-gray-700"></span>
+                                    <span>{item.total_views ?? item.views ?? 0} visualizaciones</span>
+                                {/if}
                             </div>
                             
                             <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">

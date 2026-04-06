@@ -45,7 +45,7 @@
                     </li>
                     <li class="flex items-center gap-3 text-gray-400">
                         <Mail class="shrink-0 text-indigo-400" size={18} />
-                        <span>soporte@digitalcenter.com</span>
+                        <span>{$settingsStore.contactEmail}</span>
                     </li>
                 </ul>
             </div>

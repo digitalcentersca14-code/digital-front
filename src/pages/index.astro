@@ -29,6 +29,19 @@ try {
     if (prodRes.ok) {
         allProducts = await prodRes.json();
     }
+    
+    // Front-end mapping to merge price logic
+    if (trendingProducts.length > 0 && allProducts.length > 0) {
+        trendingProducts = trendingProducts.map(t => {
+            const original = allProducts.find(p => p.id === t.product_id);
+            return {
+                ...t,
+                price: original ? original.price : t.price || 0,
+                discount_price: original ? original.discount_price : t.discount_price,
+                is_discount_active: original ? original.is_discount_active : t.is_discount_active
+            };
+        });
+    }
 } catch(e) {
     console.error("Error fetching homepage data", e);
 }
@@ -177,7 +190,10 @@ try {
                                 </div>
                                 <div class="min-w-0">
                                     <h4 class="text-white font-bold text-sm truncate mb-1">{item.product_name}</h4>
-                                    <div class="flex items-center gap-2 text-[11px] text-gray-400">
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-amber-400">
+                                        <Star size={10} class="fill-amber-400" /> {item.average_rating > 0 ? item.average_rating.toFixed(1) : 'Nuevo'}
+                                    </div>
+                                    <div class="popular-views flex items-center gap-2 text-[11px] text-gray-400 mt-1">
                                         <Eye size={12} class="text-emerald-400" /> {item.total_views} visualizaciones
                                     </div>
                                 </div>
@@ -248,4 +264,11 @@ try {
     // Init
     showSlide(0);
     resetInterval();
+
+    // Check local storage for hidden popular views
+    const authToken = localStorage.getItem('auth_token');
+    const isLoggedIn = authToken && authToken !== 'null' && authToken !== 'undefined';
+    if (!isLoggedIn) {
+        document.querySelectorAll('.popular-views').forEach(el => el.style.display = 'none');
+    }
 </script>

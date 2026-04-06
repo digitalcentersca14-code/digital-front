@@ -1,12 +1,19 @@
 <script lang="ts">
     import { settingsStore } from '../../stores/settings';
+    import { tokenStore } from '../../stores/auth';
     import Save from '../../components/icons/Save.svelte';
     import Loader2 from '../../components/icons/Loader2.svelte';
     
-    // Store variables temporales para editar
     let draftLogo = $settingsStore.logoUrl;
     let draftLocation = $settingsStore.footerLocation;
     let draftPhone = $settingsStore.whatsappPhone;
+    let draftSchedule = $settingsStore.attentionSchedule;
+    let draftIsAttentionVisible = String($settingsStore.isAttentionVisible) === 'true';
+    let draftIsClosedToday = String($settingsStore.isClosedToday) === 'true';
+    let draftEmail = $settingsStore.contactEmail;
+    let draftPromoEnabled = String($settingsStore.promoModalEnabled) === 'true';
+    let draftPromoDuration = $settingsStore.promoModalDuration || 'session';
+
     let saved = false;
     let uploading = false;
     let logoPreview = draftLogo;
@@ -23,15 +30,48 @@
         reader.readAsDataURL(file);
     }
 
-    function saveSettings(e: Event) {
+    async function saveSettings(e: Event) {
         e.preventDefault();
-        settingsStore.set({
-            logoUrl: draftLogo,
-            footerLocation: draftLocation,
-            whatsappPhone: draftPhone
-        });
-        saved = true;
-        setTimeout(() => saved = false, 3000);
+        try {
+            const token = tokenStore.get();
+            const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
+            
+            await fetch(`${API_URL}/settings/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    logo_url: draftLogo,
+                    footer_location: draftLocation,
+                    whatsapp_phone: draftPhone,
+                    attention_schedule: draftSchedule,
+                    is_attention_visible: draftIsAttentionVisible,
+                    is_closed_today: draftIsClosedToday,
+                    contact_email: draftEmail,
+                    promo_modal_enabled: draftPromoEnabled,
+                    promo_modal_duration: draftPromoDuration
+                })
+            });
+
+            settingsStore.set({
+                logoUrl: draftLogo,
+                footerLocation: draftLocation,
+                whatsappPhone: draftPhone,
+                attentionSchedule: draftSchedule,
+                isAttentionVisible: draftIsAttentionVisible,
+                isClosedToday: draftIsClosedToday,
+                contactEmail: draftEmail,
+                promoModalEnabled: draftPromoEnabled,
+                promoModalDuration: draftPromoDuration
+            });
+            
+            saved = true;
+            setTimeout(() => saved = false, 3000);
+        } catch(err) {
+            console.error("Error al guardar en backend", err);
+        }
     }
 </script>
 
@@ -108,6 +148,82 @@
                 placeholder="581234567890"
                 class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2" for="email">Correo Electrónico de Contacto</label>
+            <input 
+                id="email" 
+                type="email" 
+                bind:value={draftEmail}
+                placeholder="soporte@digitalcenter.com"
+                class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+        </div>
+
+        <div class="p-6 bg-gray-900 border border-gray-700 rounded-2xl space-y-4">
+            <h3 class="text-lg font-bold text-white mb-2">Horario y Disponibilidad</h3>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2" for="schedule">Horario de Atención</label>
+                <input 
+                    id="schedule" 
+                    type="text" 
+                    bind:value={draftSchedule}
+                    placeholder="8:00 AM - 6:00 PM"
+                    class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+            </div>
+
+            <label class="flex items-center gap-3 cursor-pointer mt-4">
+                <input 
+                    type="checkbox" 
+                    bind:checked={draftIsAttentionVisible}
+                    class="w-5 h-5 rounded border-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-gray-900 bg-gray-800 accent-indigo-500"
+                />
+                <span class="text-sm font-medium text-gray-300">Mostrar Horario de Atención públicamente</span>
+            </label>
+
+            <label class="flex items-center gap-3 cursor-pointer mt-2">
+                <input 
+                    type="checkbox" 
+                    bind:checked={draftIsClosedToday}
+                    class="w-5 h-5 rounded border-gray-700 text-red-500 focus:ring-red-500 focus:ring-offset-gray-900 bg-gray-800 accent-red-500"
+                />
+                <span class="text-sm font-medium text-red-400">Marcar tienda como CERRADA HOY (Muestra Modal)</span>
+            </label>
+        </div>
+
+        <div class="p-6 bg-gray-900 border border-gray-700 rounded-2xl space-y-4">
+            <h3 class="text-lg font-bold text-white mb-2">🔥 Modal de Ofertas</h3>
+            <p class="text-xs text-gray-500 mb-4">Muestra automáticamente un modal con productos en descuento a los visitantes no logueados.</p>
+
+            <label class="flex items-center gap-3 cursor-pointer">
+                <input 
+                    type="checkbox" 
+                    bind:checked={draftPromoEnabled}
+                    class="w-5 h-5 rounded border-gray-700 text-rose-500 focus:ring-rose-500 focus:ring-offset-gray-900 bg-gray-800 accent-rose-500"
+                />
+                <span class="text-sm font-medium text-gray-300">Activar Modal de Ofertas para visitantes</span>
+            </label>
+
+            {#if draftPromoEnabled}
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2" for="promo-duration">Frecuencia de visualización</label>
+                <select 
+                    id="promo-duration"
+                    bind:value={draftPromoDuration}
+                    class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-rose-500"
+                >
+                    <option value="always">Siempre (cada visita de página)</option>
+                    <option value="session">Una vez por sesión</option>
+                    <option value="1d">Una vez al día</option>
+                    <option value="3d">Una vez cada 3 días</option>
+                    <option value="7d">Una vez por semana</option>
+                </select>
+                <p class="text-xs text-gray-500 mt-2">⚠️ Asegúrate de tener productos con descuento activo para que el modal aparezca.</p>
+            </div>
+            {/if}
         </div>
 
         <button 

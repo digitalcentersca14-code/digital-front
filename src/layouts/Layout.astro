@@ -2,6 +2,21 @@
 import "../styles/global.css";
 import Navbar from "../components/Navbar.svelte";
 import Footer from "../components/Footer.svelte";
+import ClosedModal from "../components/ClosedModal.svelte";
+import PromoModal from "../components/PromoModal.svelte";
+
+const { title = 'Digital Center | Tu mejor opción en tecnología' } = Astro.props;
+
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
+let initialSettings = null;
+try {
+    const res = await fetch(`${API_URL}/settings/`);
+    if (res.ok) {
+        initialSettings = await res.json();
+    }
+} catch(err) {
+    console.error("Failed to load settings from DB");
+}
 ---
 
 <!doctype html>
@@ -19,6 +34,20 @@ import Footer from "../components/Footer.svelte";
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script is:inline define:vars={{ initialSettings }}>
+      // Step 1: Store server data in a global variable BEFORE any component hydrates
+      if (initialSettings) {
+        window.__siteSettings = initialSettings;
+        // Also set localStorage as backup for first render
+        localStorage.setItem('site_settings:logoUrl', initialSettings.logo_url || '');
+        localStorage.setItem('site_settings:footerLocation', initialSettings.footer_location || '');
+        localStorage.setItem('site_settings:whatsappPhone', initialSettings.whatsapp_phone || '');
+        localStorage.setItem('site_settings:attentionSchedule', initialSettings.attention_schedule || '');
+        localStorage.setItem('site_settings:isAttentionVisible', String(initialSettings.is_attention_visible));
+        localStorage.setItem('site_settings:isClosedToday', String(initialSettings.is_closed_today));
+        localStorage.setItem('site_settings:contactEmail', initialSettings.contact_email || '');
+      }
+    </script>
   </head>
   <body
     class="bg-[#0b0f19] text-gray-100 font-['Outfit'] min-h-screen flex flex-col selection:bg-indigo-500/30"
@@ -28,6 +57,22 @@ import Footer from "../components/Footer.svelte";
       <slot />
     </main>
     <Footer client:only="svelte" />
+    <ClosedModal client:load />
+    <PromoModal client:load />
+    <!-- Step 2: Module script that updates the store reactively after hydration -->
+    <script>
+      import { settingsStore } from '../stores/settings';
+      const s = window.__siteSettings;
+      if (s) {
+        settingsStore.setKey('logoUrl', s.logo_url || '');
+        settingsStore.setKey('footerLocation', s.footer_location || '');
+        settingsStore.setKey('whatsappPhone', s.whatsapp_phone || '');
+        settingsStore.setKey('attentionSchedule', s.attention_schedule || '');
+        settingsStore.setKey('isAttentionVisible', s.is_attention_visible ?? true);
+        settingsStore.setKey('isClosedToday', s.is_closed_today ?? false);
+        settingsStore.setKey('contactEmail', s.contact_email || '');
+      }
+    </script>
   </body>
 </html>
 

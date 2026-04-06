@@ -4,6 +4,7 @@ import MapPin from '../components/icons/MapPin.svelte';
 import Phone from '../components/icons/Phone.svelte';
 import Mail from '../components/icons/Mail.svelte';
 import MessageSquare from '../components/icons/MessageSquare.svelte';
+import ContactDetails from '../components/ContactDetails.svelte';
 ---
 
 <Layout>
@@ -20,15 +21,7 @@ import MessageSquare from '../components/icons/MessageSquare.svelte';
             <!-- Info de Contacto -->
             <div class="space-y-6">
 
-                <div class="glassmorphism p-8 rounded-2xl flex items-start gap-4">
-                    <div class="p-4 bg-green-500/20 rounded-xl text-green-400">
-                        <Phone size={28} />
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-white mb-2">Llamadas y WhatsApp</h3>
-                        <p class="text-gray-400">+123 456 789 000<br/>Atención 8:00 AM - 6:00 PM</p>
-                    </div>
-                </div>
+                <ContactDetails client:load />
 
             </div>
 

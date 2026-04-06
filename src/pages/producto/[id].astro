@@ -154,6 +154,17 @@ if (!product) {
         </div>
     </div>
 <script is:inline define:vars={{ productId: product.id, apiUrl: API_URL }}>
+    // Check if user is logged in
+    const authToken = localStorage.getItem('auth_token');
+    const isLoggedIn = authToken && authToken !== 'null' && authToken !== 'undefined';
+
+    if (!isLoggedIn) {
+        const viewsCounter = document.getElementById('views-counter');
+        const likeBtn = document.getElementById('like-btn');
+        if (viewsCounter) viewsCounter.style.display = 'none';
+        if (likeBtn) likeBtn.style.display = 'none';
+    }
+
     // Manejo de la galería de imágenes
     const mainImage = document.getElementById('main-image');
     const thumbBtns = document.querySelectorAll('.thumbnail-btn');
